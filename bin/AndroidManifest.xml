@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="jp.ne.sakura.snowman8765.simple_concentration"
+    android:versionCode="2"
+    android:versionName="1.1" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="jp.ne.sakura.snowman8765.simple_concentration.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="maru-scorecenter_app"
+            android:value="true" />
+
+        <activity
+            android:name="jp.maru.scorecenter.ScoreCenterActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|fontScale|uiMode|screenSize|smallestScreenSize|layoutDirection" />
+    </application>
+
+    <receiver
+        android:name="jp.maru.scorecenter.ScoreCenterReceiver"
+        android:exported="true"
+        android:permission="android.permission.INTERNET" >
+        <intent-filter>
+            <action android:name="MARU_SCORE_CENTER_SYNC" />
+            <action android:name="jp.ne.sakura.snowman8765.simple_concentration.MARU_SCORE_CENTER_WELCOME" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.PACKAGE_ADDED" />
+
+            <data android:scheme="package" />
+        </intent-filter>
+    </receiver>
+
+    <service
+        android:name="jp.maru.scorecenter.ScoreCenterService"
+        android:exported="true"
+        android:permission="android.permission.INTERNET"
+        android:process=":jp.maru.scorecenter.service" />
+
+</manifest>
