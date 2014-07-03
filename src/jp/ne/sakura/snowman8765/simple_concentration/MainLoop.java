@@ -17,8 +17,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.TextView;
 
 public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
@@ -29,17 +27,16 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 	private Thread thread;
 	private SurfaceHolder holder;
 	private int disp_w, disp_h;// 画面の幅高さ
-	private MainActivity Card1;// Activityクラス登録
+	private MainActivity mainAct;// Activityクラス登録
 	private int sleep;// 遅延時間
-	private TextView tv = null;
 
 	// 変数設定
 
-	public static final int MAX_MAISUU = 52;// カード枚数
-	public static final int SYURUI = 4;// カード種類の数
-	public static final int MAISUU = 13;// カード１種類の枚数
+	public static final int SYURUI = 2;// カード種類の数
+	public static final int MAISUU = 9;// カード１種類の枚数
+	public static final int MAX_MAISUU = SYURUI * MAISUU;// カード枚数
 
-	private Card buck;// 背景画像
+	private Card back;// 背景画像
 	private Drawable[] card_img;// ５２枚カード
 	private Drawable[] card_img2;// カード裏、使わないけどジョーカー用
 	private ArrayList<Card> card = new ArrayList<Card>();// カード用オブジェクト
@@ -77,21 +74,19 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 		holder = getHolder();
 		holder.addCallback(this);
 		holder.setFixedSize(getWidth(), getHeight());
-		Card1 = (MainActivity) context;
-		disp_w = Card1.disp_w;// 画面幅取得
-		disp_h = Card1.disp_h;// 画面高さ取得
-		game_state = 1;// ゲーム状態
-		tv = new TextView(Card1);
-		tv.setVisibility(View.VISIBLE);
+		mainAct = (MainActivity) context;
+		disp_w = mainAct.disp_w;// 画面幅取得
+		disp_h = mainAct.disp_h;// 画面高さ取得
+		game_state = GAME_START;// ゲーム状態
 
 		// ここから初期化
 
 		this.setSleep(0);// ループ中遅延時間
 
-		buck = new Card(disp_w, disp_h);
-		buck.Rectinit(0, 0, (int) disp_w, (int) disp_h, Color.BLACK, 100);
+		back = new Card(disp_w, disp_h);
+		back.Rectinit(0, 0, disp_w, disp_h, Color.BLUE, 100);
 		tap = new Card(disp_w, disp_h);
-		tap.Rectinit(0, 0, 100, 100, Color.RED, 30);
+		tap.Rectinit(0, 0, 100, 100, Color.RED, 40);
 
 		Resources resources = context.getResources();// 画像登録準備
 		card_img = new Drawable[MAX_MAISUU];
@@ -100,9 +95,9 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 		for (int i = 0; i < SYURUI; i++) {
 			for (int j = 0; j < MAISUU; j++) {
 				card_img[j + i * MAISUU] = new BitmapDrawable(getResources(),
-						Bitmap.createBitmap(img, j * (img.getWidth() / MAISUU),
-								i * (img.getHeight() / SYURUI), img.getWidth()
-										/ MAISUU, img.getHeight() / SYURUI));
+						Bitmap.createBitmap(img, j * (img.getWidth() / 13),
+								i * (img.getHeight() / 4), img.getWidth()
+										/ 13, img.getHeight() / 4));
 				card_xy[j + i * MAISUU] = new Rect(j * (int) (disp_w / MAISUU),
 						i * (int) (disp_h / SYURUI), (int) (disp_w / MAISUU),
 						(int) (disp_h / SYURUI));
@@ -127,7 +122,7 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 
 		for (int i = 0; i < MAX_MAISUU; i++) {
 			card.add(new Card(disp_w, disp_h));// カードをオブジェクト登録
-			card.get(i).Cardinit(card_img[i], card_img2[1], 0, 0, 70, 105);// カードを初期設定
+			card.get(i).Cardinit(card_img[i], card_img2[1], 0, 0, img.getWidth() / 2, img.getHeight());// カードを初期設定
 			card.get(i).setCardRect(card_xy[i]);
 		}
 		for (int i = 0; i < SYURUI; i++) {
@@ -146,7 +141,7 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 	private void Syokika() {
 		for (int i = 0; i < MAX_MAISUU; i++) {
 			card.get(i).setCardDraw(true);
-			card.get(i).setObjState(1);
+			card.get(i).setObjState(Card.OMOTE);
 		}
 		Shuffle();
 		startTime = System.currentTimeMillis();
@@ -189,7 +184,7 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 					PlayDraw(c, p);
 					break;
 				case GAME_CLEAR:
-					Card1.scoreCenter.postScore("simple_concentration_scoreboard1", java.lang.String.valueOf(0.000f));
+					mainAct.scoreCenter.postScore("simple_concentration_scoreboard1", java.lang.String.valueOf(0.000f));
 					drawString("GAME CLEAR!", 10, 200, 60, Color.BLUE, c, p);
 					break;
 				}
@@ -219,7 +214,7 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 				break;
 			case GAME_CLEAR:
 				Syokika();
-				game_state = 1;
+				game_state = GAME_START;
 				break;
 			}
 			break;
@@ -257,7 +252,7 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 	public void PlayDraw(Canvas c, Paint p) {
 		// プレイ画面表示
 		// 背景表示黒く塗りつぶすだけ
-		buck.Rectdraw(c, p);
+		back.Rectdraw(c, p);
 
 		c.drawBitmap(back_img, src, dist, p);
 
@@ -270,8 +265,9 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 			tap.Rectdraw(c, p);
 		}
 		// ２枚目タップしていればカウント＋１
-		if (tap_tap == true)
-			++hantei_count;
+		if (tap_tap == true) {
+			hantei_count++;
+		}
 		// ２枚目タップしててカウントが５になれば判定
 		// ここで２枚めくったらすぐ消えたりするのを防いでいます
 		if (tap_tap == true && hantei_count == 5) {
@@ -279,8 +275,9 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 			hantei_count = 0;
 			Shuffle();
 			// ５２枚めくれたらクリア
-			if (card_count == 52)
-				game_state = 2;
+			if (card_count == MAX_MAISUU) {
+				game_state = GAME_CLEAR;
+			}
 		}
 
 		endTime =System.currentTimeMillis();
@@ -296,7 +293,7 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 		if (RectTap(x, y, tap_rect_old) == true) {
 			tap_rect = false;
 			tap_rect_old = new Rect(0, 0, 0, 0);
-			card.get(tap_one).setObjState(1);
+			card.get(tap_one).setObjState(Card.OMOTE);
 		} else
 		// 始めてカードをタップした場合
 		if (tap_rect == false) {
@@ -306,7 +303,7 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 					tap.getsetCardRect(card.get(i).getCardRect());
 					tap_rect_old = card.get(i).getCardRect();
 					tap_rect = true;
-					card.get(i).setObjState(0);
+					card.get(i).setObjState(Card.URA);
 					tap_one = i;
 				}
 			}
@@ -318,7 +315,7 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 						&& tap_one != i
 						&& RectTap(x, y, card.get(i).getCardRect()) == true) {
 					tap.getsetCardRect(card.get(i).getCardRect());
-					card.get(i).setObjState(0);
+					card.get(i).setObjState(Card.URA);
 					tap_two = i;
 					tap_tap = true;
 				}
@@ -337,8 +334,8 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 			tap_rect_old = new Rect(0, 0, 0, 0);
 			card_count += 2;
 		} else {
-			card.get(tap_one).setObjState(1);
-			card.get(tap_two).setObjState(1);
+			card.get(tap_one).setObjState(Card.OMOTE);
+			card.get(tap_two).setObjState(Card.OMOTE);
 			tap_tap = false;
 			tap_rect = false;
 			tap_rect_old = new Rect(0, 0, 0, 0);

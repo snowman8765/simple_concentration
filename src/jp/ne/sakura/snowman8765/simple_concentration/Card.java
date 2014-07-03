@@ -9,7 +9,7 @@ public class Card {
 
 	private double disp_w, disp_h;// ディスプレイ大きさ
 
-	public float px, py; // オブジェクト座標
+	public int px, py; // オブジェクト座標
 	private int w, h; // オブジェクトの横幅縦幅
 	private Rect rect; // オブジェクトのRect
 	private int alpha; // オブジェクトの透過度
@@ -18,6 +18,9 @@ public class Card {
 	private Drawable[] obj = new Drawable[2];// カード画像、表、裏
 	private int suuji, syurui;// カード数字と種類
 	private boolean card_draw = true;// カードを表示させるかどうか
+
+	public static int URA = 0;
+	public static int OMOTE = 1;
 
 	// コンストラクタ
 	public Card() {
@@ -29,16 +32,16 @@ public class Card {
 	}
 
 	// カード初期化
-	public void Cardinit(Drawable img, Drawable img2, float px, float py,
-			int w, int h) {
-		this.obj[0] = img;
-		this.obj[1] = img2;
+	public void Cardinit(Drawable img, Drawable img2, int px, int py, int w,
+			int h) {
+		this.obj[URA] = img;
+		this.obj[OMOTE] = img2;
 		this.px = px;
 		this.py = py;
 		this.w = w;
 		this.h = h;
-		objs_state = 1;
-		//setgetDrawableSize();
+		objs_state = OMOTE;
+		// setgetDrawableSize();
 
 	}
 
@@ -51,22 +54,21 @@ public class Card {
 	// カード表示
 	public void Carddraw(Canvas c, Paint p) {
 		if (card_draw == true) {
-			rect = new Rect((int) (px), (int) (py), (int) (px + w),
-					(int) (py + h));
+			rect = new Rect(px, py, px + w, py + h);
 			obj[objs_state].setBounds(rect);
 			obj[objs_state].draw(c);
 		}
 	}
 
 	// 短形初期化
-	public void Rectinit(float px, float py, int w, int h, int col, int al) {
+	public void Rectinit(int px, int py, int w, int h, int col, int al) {
 		this.px = px;
 		this.py = py;
 		this.w = w;
 		this.h = h;
 		this.col = col;
 		this.alpha = al;
-		//setgetDrawableSize();
+		// setgetDrawableSize();
 		rect = new Rect((int) (px), (int) (py), (int) (px + w), (int) (py + h));
 	}
 
@@ -83,7 +85,7 @@ public class Card {
 		py = rect1.top;
 		w = rect1.right;
 		h = rect1.bottom;
-		//setgetDrawableSize();
+		// setgetDrawableSize();
 	}
 
 	public boolean getCardDraw() {

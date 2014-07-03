@@ -30,9 +30,9 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFormat(PixelFormat.TRANSLUCENT);
 		Window window = getWindow();
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		window.setFormat(PixelFormat.TRANSLUCENT);
+		window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		WindowManager manager = window.getWindowManager();
 		Display disp = manager.getDefaultDisplay();
 		Point size = new Point();
@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
 		//scoreCenter.setKeepViewCacheEnable(true);
 
 		setContentView(new MainLoop(this));
-		// setContentView(R.layout.main);
+		//setContentView(R.layout.activity_main);
 
 		scoreCenter.hello();
 	}
