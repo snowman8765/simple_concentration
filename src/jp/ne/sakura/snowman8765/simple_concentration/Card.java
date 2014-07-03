@@ -19,8 +19,8 @@ public class Card {
 	private int suuji, syurui;// カード数字と種類
 	private boolean card_draw = true;// カードを表示させるかどうか
 
-	public static int URA = 0;
-	public static int OMOTE = 1;
+	public static final int URA = 0;
+	public static final int OMOTE = 1;
 
 	// コンストラクタ
 	public Card() {
