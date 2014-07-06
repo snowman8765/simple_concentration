@@ -18,7 +18,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+public class MainLoop extends SurfaceView implements SurfaceHolder.Callback,
+		Runnable {
 
 	public static final int GAME_START = 0;// ゲーム状態固定値
 	public static final int GAME_PLAY = 1;// ゲーム状態固定値
@@ -95,9 +96,9 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 		for (int i = 0; i < SYURUI; i++) {
 			for (int j = 0; j < MAISUU; j++) {
 				card_img[j + i * MAISUU] = new BitmapDrawable(getResources(),
-						Bitmap.createBitmap(img, j * (img.getWidth() / 13),
-								i * (img.getHeight() / 4), img.getWidth()
-										/ 13, img.getHeight() / 4));
+						Bitmap.createBitmap(img, j * (img.getWidth() / 13), i
+								* (img.getHeight() / 4), img.getWidth() / 13,
+								img.getHeight() / 4));
 				card_xy[j + i * MAISUU] = new Rect(j * (int) (disp_w / MAISUU),
 						i * (int) (disp_h / SYURUI), (int) (disp_w / MAISUU),
 						(int) (disp_h / SYURUI));
@@ -105,10 +106,10 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 		}
 
 		back_img = BitmapFactory.decodeResource(resources, R.drawable.clear);
-		src = new Rect(0,0,back_img.getWidth(),back_img.getHeight());
-		dist = new Rect(0,0,disp_w,disp_h);
+		src = new Rect(0, 0, back_img.getWidth(), back_img.getHeight());
+		dist = new Rect(0, 0, disp_w, disp_h);
 
-		for ( int i = 0; i < MAX_MAISUU; i++ ) {
+		for (int i = 0; i < MAX_MAISUU; i++) {
 			card_list.add(i);
 		}
 
@@ -122,7 +123,8 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 
 		for (int i = 0; i < MAX_MAISUU; i++) {
 			card.add(new Card(disp_w, disp_h));// カードをオブジェクト登録
-			card.get(i).Cardinit(card_img[i], card_img2[1], 0, 0, img.getWidth() / 2, img.getHeight());// カードを初期設定
+			card.get(i).Cardinit(card_img[i], card_img2[1], 0, 0,
+					img.getWidth() / 2, img.getHeight());// カードを初期設定
 			card.get(i).setCardRect(card_xy[i]);
 		}
 		for (int i = 0; i < SYURUI; i++) {
@@ -149,15 +151,15 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 
 	// カードシャッフル処理
 	public void Shuffle() {
-//		Random r = new Random(new Date().getTime());
-//		Rect c = new Rect();
-//		for (int i = 0; i < 1000; i++) {
-//			int a = r.nextInt(MAX_MAISUU);
-//			int b = r.nextInt(MAX_MAISUU);
-//			c = card_xy[a];
-//			card_xy[a] = card_xy[b];
-//			card_xy[b] = c;
-//		}
+		// Random r = new Random(new Date().getTime());
+		// Rect c = new Rect();
+		// for (int i = 0; i < 1000; i++) {
+		// int a = r.nextInt(MAX_MAISUU);
+		// int b = r.nextInt(MAX_MAISUU);
+		// c = card_xy[a];
+		// card_xy[a] = card_xy[b];
+		// card_xy[b] = c;
+		// }
 
 		Collections.shuffle(card_list);
 
@@ -174,7 +176,7 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 
 		while (thread != null) {
 			c = holder.lockCanvas();
-			if(c!=null) {
+			if (c != null) {
 				// ゲーム状態によってスイッチ処理
 				switch (game_state) {
 				case GAME_START:
@@ -184,7 +186,10 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 					PlayDraw(c, p);
 					break;
 				case GAME_CLEAR:
-					mainAct.scoreCenter.postScore("simple_concentration_scoreboard1", java.lang.String.valueOf(0.000f));
+					float erapsedTime = (endTime - startTime) / 1000.0f;
+					mainAct.scoreCenter.postScore(
+							"simple_concentration_scoreboard1",
+							java.lang.String.valueOf(erapsedTime));
 					drawString("GAME CLEAR!", 10, 200, 60, Color.BLUE, c, p);
 					break;
 				}
@@ -280,11 +285,11 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback, Run
 			}
 		}
 
-		endTime =System.currentTimeMillis();
-		float erapsedTime = (endTime - startTime)/1000.0f;
+		endTime = System.currentTimeMillis();
+		float erapsedTime = (endTime - startTime) / 1000.0f;
 		p.setColor(Color.BLUE);
 		p.setTextSize(60);
-		c.drawText("経過時間 : "+ erapsedTime +" 秒", 10, disp_h, p);
+		c.drawText("経過時間 : " + erapsedTime + " 秒", 10, disp_h, p);
 	}
 
 	// タップした時の処理
