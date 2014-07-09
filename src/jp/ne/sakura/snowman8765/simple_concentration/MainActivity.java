@@ -35,11 +35,16 @@ public class MainActivity extends Activity {
 		window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		WindowManager manager = window.getWindowManager();
 		Display disp = manager.getDefaultDisplay();
-		Point size = new Point();
-		disp.getSize(size);
-		disp_w = size.x;
-		disp_h = size.y;
-
+		Display display = getWindowManager().getDefaultDisplay();
+		if (Integer.valueOf(android.os.Build.VERSION.SDK_INT) < 13) {
+			disp_w = display.getWidth();
+			disp_w = display.getHeight();
+		} else {
+			Point size = new Point();
+			disp.getSize(size);
+			disp_w = size.x;
+			disp_h = size.y;
+		}
 		// onFinish(), onTick()
 		keyEventTimer = new CountDownTimer(1000, 100) {
 			@Override
@@ -55,11 +60,11 @@ public class MainActivity extends Activity {
 
 		scoreCenter = ScoreCenter.getInstance();
 		scoreCenter.initialize(getApplicationContext());
-		//scoreCenter.setLogEnable(true);
-		//scoreCenter.setKeepViewCacheEnable(true);
+		// scoreCenter.setLogEnable(true);
+		// scoreCenter.setKeepViewCacheEnable(true);
 
 		setContentView(new MainLoop(this));
-		//setContentView(R.layout.activity_main);
+		// setContentView(R.layout.activity_main);
 
 		scoreCenter.hello();
 	}

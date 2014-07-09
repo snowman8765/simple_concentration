@@ -78,7 +78,7 @@ public class MainLoop extends SurfaceView implements SurfaceHolder.Callback,
 		mainAct = (MainActivity) context;
 		disp_w = mainAct.disp_w;// 画面幅取得
 		disp_h = mainAct.disp_h;// 画面高さ取得
-		game_state = GAME_START;// ゲーム状態
+		game_state = GAME_PLAY;// ゲーム状態
 
 		// ここから初期化
 
